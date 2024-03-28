@@ -1,0 +1,139 @@
+#include <stdio.h>
+#define STACK_SZ  5
+#define _CRT_SECURE_WARNINGS
+
+#if 0
+
+int stack[STACK_SZ];
+
+int top = -1; //stack is emoty == -1
+
+int is_full(void) {
+
+	return (top == (STACK_SZ - 1)) ? 1 : 0;
+}
+
+
+void push(int _v) { // _v 값을 받아서 stack에 저장하기
+	//_v를 어느 위치에 넣는가? = top 위에 넣고 top 값을 update 한다.: top = top +1
+
+	//stack is full 이라는 예외사항
+	if (is_full())
+		return;
+
+
+	top = top + 1;
+	stack[top] = _v;
+	return;
+}
+
+	int is_empty(void) {
+		return (top == -1);
+	}
+
+	int pop(void) {
+
+		if (is_empty()) {
+
+			return -999; //empty 라는 뜻으로 씀
+
+			int res = stack[top];
+			top = top - 1;
+			return res;
+
+		}
+	}
+
+int peek(void) {
+
+	if (is_empty()) {
+		return stack[top];
+	}
+}
+
+
+int main(void) {
+
+	push(5);
+	push(10);
+	push(10);
+	push(10);
+	push(11);
+
+	printf("%d\n", pop());
+	printf("%d\n", pop());
+	printf("%d\n", pop());
+	printf("%d\n", pop());
+	printf("%d\n", pop());
+
+	//stack의 크기 지정하기
+
+	return 0;
+}
+
+
+#endif
+
+
+#define QUE_SZ 5
+
+int que[QUE_SZ];
+int front = 0;
+int rear = 0;
+
+int is_que_empty(void) {
+	return (front == rear);
+}
+
+int is_que_full(void) {
+	return ( ((rear + 1)%QUE_SZ )== front ); // 4에서 바로 0으로 돌릴 수 있는 식 
+}
+
+
+void enque(int _v) {
+	if (is_que_full()) {
+
+		return;
+	}
+	rear = rear + 1;
+	que[rear] = _v;
+	return;
+
+}
+
+
+int deque(void) {
+	if (is_que_empty()) {
+		return -999; //empty 를 뜻함.
+	}
+
+	front = (front + 1)%QUE_SZ;
+	return que[front];
+
+}
+
+int main(void) {
+
+	enque(10); 
+	enque(20); 
+	enque(30); 
+	enque(40);  //QUE는  한 칸을 안 쓰기 때문에 5개가 아니라 4개만 할당함.
+	
+	printf("%d\n", deque());
+	printf("%d\n", deque());
+	printf("%d\n", deque());
+	printf("%d\n", deque()); // -999 empty
+
+	return 0;
+
+}
+
+int main(void) {
+	add_to_rear(10); //입력
+	add_to_rear(20); //입력
+	add_to_front(30); //구현
+	del_from_rear(); // 20 구현 
+
+	return 0;
+}
+
