@@ -1,0 +1,194 @@
+// 배열의 장점 = linkedㅣist의 단점 == 상호보완적이다.
+/*
+필요하면 그 때마다 붙여서 쓰면 된다.  
+*/
+
+#include <stdio.h>
+#include <stdlib.h>
+
+struct Node {
+	int data;
+	struct Node *next;
+};
+
+struct Node *head = 0; //아무것도 가르키고 있지 않다는 의미의 0 
+
+void add_to_SLL(int _v) {
+	malloc(sizeof(struct Node)); //메모리를 할당받는 역할을 하는 malloc
+	struct Node* new_node = (struct Node*)malloc(sizeof(struct Node)); //struct Node 는 각 int, struct의 크기를 합산해 가지고 있는 역할
+
+
+};
+
+void add_to_SLL(int _v) {
+
+	struct Node* new_node = (struct Node*)malloc(sizeof(struct Node));
+	new_node->data = _v;
+	new_node->next = 0;
+
+	if (head == 0) {
+		head = new_node;
+		return;
+	}
+
+	struct Node* tmp = head; //head 를 복사한다 tmp에
+	while (1) {
+		if (tmp->next == 0); {
+		break;
+	}
+	tmp = tmp->next;
+	}
+	tmp->next = new_node;
+	return;
+
+
+}
+
+void print_SLL(void) {
+
+	struct Node* tmp = head;
+
+	while (1) {
+
+		if (tmp == 0) {
+			break;
+		}
+
+		printf("%d ", tmp->data);
+		tmp = tmp->next;
+	}
+
+	return;
+}
+
+void destroy_SLL(void) {
+
+	struct Node* bomb = 0; // bomb = 지울 노드의 주소를 담고있는 포인터
+
+	while (1) {
+		if (head == 0) {
+			break;
+
+		}
+		bomb = head;
+		head = head->next;
+		free(bomb);
+	}
+
+}
+
+
+void insert_into_SLL(int _nth, int _v) {
+
+	if (_nth < 0) {
+		return; // 음수 인덱스는 무시하기
+	}
+
+
+	// _nth 번째 노드를 찾아가는과정
+	// tmp 는 내가 들어가려는 위티 노드의 바로 앞 노드를 가리킨다.
+
+
+	struct Node* tmp = head;
+	for (int i = 0; i < _nth; i++) {
+		tmp = tmp->next;
+
+		if (tmp == 0) {
+			return; //0번째가 업음
+
+		}
+	}
+
+	//new node 만들기
+	struct Node* new_node = (struct Node*)malloc(sizeof(struct Node));
+	new_node->data = _v;
+	new_node->next = 0;
+
+	//맨 앞에 놓는 경우
+	if (_nth == 0) {
+		new_node->next = head->next;
+		head = new_node;
+	}
+
+	else {
+		//1. 
+		new_node->next = tmp->next;
+		//2.
+		tmp->next = new_node;
+
+	}
+
+}
+
+
+void del_from_SLL(int _v) {
+	struct Node* tmp = head;
+	if (head == 0) { //아무것도 없는 경우
+		return;
+
+	}
+	// _v 를 값으로 갖는 노드를 찾는다. 없으면 return 
+
+	struct Node* tmp = head;
+
+	while (1) {
+		// 원하는 _v 를 가진 노드를 찾았ㄱ, 그게 tmp 를 가리키고 있음.
+
+		if (tmp->data == _v) {
+			break;
+
+		}
+		tmp = tmp->next;
+		//찾는 것이 없음
+
+		if (tmp == 0) {
+			return;
+		}
+	}
+	//만약 지우려는 노드가 맨 앞이라면?
+	if (tmp == head) {
+		head = head->next;
+		free(tmp);
+		return;
+
+	}
+	// 지우려는 노드의 앞을 찾아야 한다
+	struct Node* tt = head;
+
+	//tt를 움직여서  tt 뒤에 tmp 가 오도록 이동한다.
+	while (tt->next != tmp) {
+		tt = tt->next;
+	}
+
+	tt->next = tmp->next;
+	free(tmp);
+	return;
+}
+
+
+
+int main(void) {
+
+	add_to_SLL(10);
+	add_to_SLL(20);
+	add_to_SLL(30);
+	add_to_SLL(40);
+	add_to_SLL(50);
+
+	print_SLL();
+
+	// delete_SLL();
+
+
+	print_SLL();
+
+	insert_into_SLL(3, 33); //3번째에 33 끼워넣기 
+	insert_into_SLL(0, 23); //
+	
+	del_from_SLL(33); //숫자 33을 찾아서 삭제하기, 없으면 못 함.
+
+
+	// link_two_sll(head1, head2); // head1,2 는 변수가 아니라 숫자임. 1~5 사이의 숫자 대입하기.
+	return 0;
+}
+
