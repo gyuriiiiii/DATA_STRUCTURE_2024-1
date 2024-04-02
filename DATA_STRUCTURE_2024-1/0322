@@ -1,0 +1,422 @@
+// 중위표기법 - 연산자가 피연산자 사이에 위치함.
+// 전위표기법 - 연산자가 피연산자 앞에 위치함
+// 후위표기법 - 연산자가 뒤에 있음 <- stack 통해서 구현함.
+
+/*
+표기법간 변환
+ - 괄호에 있는 연산자를 괄호 밖으로 꺼낸다,
+ 앞으로 꺼내면 전위, 뒤로는 후위
+
+
+
+*/
+
+#include <stdio.h>
+#define _CRT_SECURE_WARNINGS
+
+
+#if 0
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+
+
+#define MAX_STACK_SIZE 100  // stack 최대 크기를 100으로 정의하기.
+
+
+typedef char element;
+
+typedef struct {
+
+	element data[MAX_STACK_SIZE];
+	int top;
+
+} StackType;
+
+
+//스택 초기화 함수
+void init_stack(StackType* s) {
+	s->top = -1;
+
+}
+
+// 공백상태 검출 함수
+
+int is_empty(StackType* s) { // 스택이 비었는지? 그렇다면 비었다는 의미로 -1 출력
+	return (s->top == -1);
+
+}
+
+//포화상태 검출 함수
+int is_full(StackType* s) {
+
+	return (s->top == (MAX_STACK_SIZE - 1));
+}
+
+
+//삽입함수
+void push(StackType* s, element item) {
+
+	if (is_full(s)) {
+			fprintf(stderr, "stack is full\n"); // standard error <- 출력
+			return;
+			}
+
+			else s->data[++(s->top)] = item;
+
+ }
+
+
+ //삭제함수
+ element pop(StackType * s) {
+
+	 if (is_empty(s)) {
+			fprintf(stderr, "stack is empty\n"); //스택 공백 에러\n
+			exit(1);
+	 }
+
+	 else return s->data[(s->top)--];
+
+ }
+
+
+
+ // 확인하는 함수
+ element peek(StackType * s) {
+	 if (is_empty(s)) {
+		 fprintf(stderr, "stack is empty"); //fprintf 
+		 exit(1);
+
+	 }
+	 else return s->data[(s->top)];
+ }
+
+
+#endif
+
+#if 0
+ //후위표기식 계산 알고리즘
+ /*
+ 수도코드 -
+
+ */
+
+ //후위표기 계산 함수
+
+ int eval(char, exp[]) {
+
+	 int op1, op2, value, i = 0;
+	 int len = strlen(exp);
+
+	 char ch;
+	 StackType s;
+	 init_stack(&s);
+
+	 for (i = 0; i < len; i++) {
+		 ch = exp[i];
+
+		 if (ch != '+' && ch != '-' && ch != '*' && ch != '/'); {
+
+			 value = ch - '0';
+			 push(&s, value);
+
+		 }
+
+		 else {
+			 op2 = pop(&s);
+			 op1 = pop(&s);
+			 switch (ch) {
+			 case '+': push(&s, op1 + op2); break;
+			 case '-': push(&s, op1 - op2); break;
+			 case '*': push(&s, op1 * op2); break;
+			 case '/': push(&s, op1 / op2); break;
+			 }
+		 }
+	 }
+	 return pop(&s);
+ }
+
+ int main(void) {
+
+	 int result;
+	 printf("후위표기식은 82/3-32*+\n");
+	 result = eval("82/3-32*+");
+	 printf("결과값은 %d\n", result);
+	 return 0;
+ }
+
+#endif
+
+
+ //중앙 - >후위 표기식
+ /*
+ while
+	 ch
+	 switch
+		 case
+			 while peek(s)
+			 do e
+			 e print
+			 push
+			 break
+		 case 왼쪽 괄호;
+			 push
+			 break
+		 case 오른쪽 괄호;
+			 e
+			 while
+				 do e
+				 o
+			 break
+		 case 피연산자
+			 ch
+			 break
+	 while (not is_empty
+		 do e
+		 e
+
+
+ */
+
+
+#if 0
+
+ int prec(char op) {
+
+	 switch (op) {
+	 case '(':
+	 case ')':
+		 return 0;
+	 case '+':
+	 case '-':
+		 return 1;
+	 case '*':
+	 case '/':
+		 return 2;
+
+	 }
+	 return -1;
+
+ }
+
+ //중위 -> 후위 표기 수식
+
+ void infix_to_postfix(char exp[]) {
+
+	 int i = 0;
+	 char ch, top_op;
+	 int len = strlen(exp);
+
+	 StackType s;
+	 init_stack(&s);
+
+	 for (i = 0; i < len; i++) {
+		 ch = exp[i];
+		 switch (ch) {
+		 case'+': case '-': case'*': case'/':  //연산자
+			 while (!is_empty(&s) && (prec(ch) <= prec(peek(&s))))
+				 printf("%c", pop(&s));
+			 push(&s, ch);
+			 break;
+
+		 case '(':
+			 push(&s, ch);
+			 break;
+
+		 case ')':
+			 top_op = pop(&s);
+			 while (top_op != '(') {
+				 printf("%c", top_op);
+				 top_op = pop(&s);
+			 }
+			 break;
+			 default :
+			 printf("%c", ch);
+			 break;
+		 }
+
+
+	 }
+		 while (!is_empty(&s)) {
+			 printf("%c", pop(&s));
+
+		 }
+
+		 int main(void); {
+
+			 char* s = "(2+3)*4+9";
+			 printf("중위 표시 수식%s \n " , s);
+			 printf("중위 표시 수식%s ");
+			 infix_to_postfix(s);
+			 printf("\n");
+			 return 0;
+		 }
+
+ }
+
+#endif
+
+
+#if 1
+
+
+#include <stdio.h>
+#define MAX_DEQUE 5
+
+#include <stdio.h>
+#define MAX_DEQUE 5
+
+ typedef int element;
+ typedef struct {
+	 int front;
+	 int rear;
+	 element data[MAX_DEQUE];
+
+ } DequeType;
+
+ //덱 초기화
+ void init_deque(DequeType * dq) {
+
+	 dq->front = 0;
+	 dq->rear = 0;
+
+ }
+ 
+ //공백/포화상태 검사
+ int is_empty(DequeType * dq) {
+
+	 if (dq->front == dq->rear)
+		 return 1; //공백상태
+	 else
+		 return 0;
+	 
+ }
+
+
+ int is_full(DequeType * dq) {
+
+	 if (dq->front == (dq->rear + 1) % MAX_DEQUE) 
+		 return 1;
+	 else {
+		 return 0;
+	 }
+
+
+// add_font = 앞에 추가  add_rear = 뒤에추가
+	 void add_front(DequeType * dq, element item); {
+		 if (is_full(dq) == 1) {
+			 printf("full\n");
+
+		 }
+		 else {
+			 dq->data[dq->front] = item;  ////// item 이 정의되어 있지 않음.
+			 dq->front = (dq->front - 1 + MAX_DEQUE) % MAX_DEQUE;
+		 }
+	 }
+
+
+// front 에 데이터 삽입 시 일단 front 에 삽입한 후 반시계방향으로 한 칸 이동
+	 void add_rear(DequeType * dq, element item); {
+		 if (is_full(dq) == 1) {
+			 pintf("full\n");
+
+		 }
+		 else {
+			 dq->rear = (dq->rear + 1) % MAX_DEQUE;
+			 dq->data[dq->rear] = item;
+		 }
+	 }
+
+	 //rear 에 데이터를 삽입할 때 rear 를 시계방향으로 한칸 이동 후 데이터를 삽입한다.
+	 int delete_front(DequeType * dq); {
+
+				 if (is_empty(dq) == 1) {
+					 printf("empty\n");
+				 }
+				 else {
+					 dq->front = (dq->front + 1) % MAX_DEQUE;
+					 return dq->data[dq->front];
+				 }
+			 }
+
+	 int delete_rear(DequeType * dq); {
+
+				 element item;
+				 if (is_empty(dq) == 1) {
+					 printf("empty\n");
+				 }
+				 else {
+					 item = dq->data[dq->rear];
+					 dq->rear = (dq-> rear -1 + MAX_DEQUE) % MAX_DEQUE;
+					 return item;
+				 }
+			 }
+
+			 ////////////  w중간부분 깃허브 보고 수정 + 보완 / 수정완(04.02)
+
+ // get_front 앞에서 요소변환  get_rear 뒤에서 요소변환
+	 int get_front(DequeType * dq); {
+				 if (is_empty(dq) == 1) {
+					 printf("empty\n");
+				 }
+				 else {
+
+					 return dq->data[(dq->front + 1) % MAX_DEQUE];
+				 }
+			 }
+
+
+	 int get_rear(DequeType * dq) {
+		 if (is_empty(dq) == 1) {
+			 printf("empty\n");
+		 }
+		 else {
+			 return dq->data[dq->rear];
+		 }
+	 }
+
+	 //덱 출력
+
+	 void print_deque(DequeType*dq) {
+
+		 printf("(front = %d rear = %d) = ", dq->front, dq->reqr);
+		 if(!is_empty(dq) == 1) {
+			 int i = dq->front;
+			 do {
+				 i = (i + 1) % MAX_DEQUE;
+				 printf("%d | ", dq->data[i]);
+				 if (i == dq->rear)
+					 break;
+			 } while (i != dq->front);
+			 printf("\n");
+		 }
+	 }
+
+	 int main(void) {
+
+		 DequeType dq;
+		 init_deque(&dq);
+
+
+
+		 add_rear(&dq, 1); //뒤에 삽입
+		 print_deque(&dq);
+
+		 add_rear(&dq, 2); //뒤에 삽입
+		 print_deque(&dq);
+
+		 add_front(&dq, 3); //앞에 삽입
+		 print_deque(&dq);
+
+		 delete_rear(&dq); //뒤에서 삭제
+		 print_deque(&dq);
+
+		 delete_front(&dq); //앞에서 삭제
+		 print_deque(&dq);
+
+		 return 0;
+	 }
+
+#endif
