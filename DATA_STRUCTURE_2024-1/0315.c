@@ -8,7 +8,7 @@
 
 int fibo(int n) {
 
-	static int arr[MAX_SIZE] = { 0 };  //staticÀÌ ÀÖÀ¸¹Ç·Î ÀÚµ¿À¸·Î 0À¸·Î ÃÊ±âÈ­ µÈ´Ù, 
+	static int arr[MAX_SIZE] = { 0 };  //staticì´ ìˆìœ¼ë¯€ë¡œ ìë™ìœ¼ë¡œ 0ìœ¼ë¡œ ì´ˆê¸°í™” ëœë‹¤, 
 
 	if (n < 2) {
 		return n;
@@ -20,7 +20,7 @@ int fibo(int n) {
 	}
 
 	else {
-		return arr[n] = fibo(n - 1) + fibo(n - 2); //arr ¹è¿­¿¡ ÀÌ¹Ì °ªÀÌ ÀúÀåµÇ¾î ÀÖ´Â °æ¿ì
+		return arr[n] = fibo(n - 1) + fibo(n - 2); //arr ë°°ì—´ì— ì´ë¯¸ ê°’ì´ ì €ì¥ë˜ì–´ ìˆëŠ” ê²½ìš°
 
 	}
 
@@ -34,7 +34,7 @@ int main() {
 	int result = 0;
 	result = fibo(num);
 
-	printf("%d¹øÂ° fibo ¼ö¿­ °ª : %d", num, result);
+	printf("%dë²ˆì§¸ fibo ìˆ˜ì—´ ê°’ : %d", num, result);
 
 	return 0;
 }
@@ -44,17 +44,17 @@ int main() {
 
 #if 0
 
-// ÇÏ³ëÀÌÅ¾ ¹®Á¦ ±ÔÄ¢À» ÁöÄÑ¼­ ¸ñÇ¥±âµÕÀ¸·Î ¿Å±â´Â °Í.
-// Ãâ¹ß, ¸ñÇ¥ , º¸Á¶±âµÕ
+// í•˜ë…¸ì´íƒ‘ ë¬¸ì œ ê·œì¹™ì„ ì§€ì¼œì„œ ëª©í‘œê¸°ë‘¥ìœ¼ë¡œ ì˜®ê¸°ëŠ” ê²ƒ.
+// ì¶œë°œ, ëª©í‘œ , ë³´ì¡°ê¸°ë‘¥
 void hanoi(int n, char from, char to, char tmp) {
 
 	if (n == 1) {
-		printf("¿øÆÇ 1À» %c¿¡¼­ %c·Î ¿Å±é´Ï´Ù. \n" , from , to);
+		printf("ì›íŒ 1ì„ %cì—ì„œ %cë¡œ ì˜®ê¹ë‹ˆë‹¤. \n" , from , to);
 		return;
 	}
 
 	hanoi(n - 1, from, tmp, to);
-	printf("¿øÆÇ %d¸¦ %c¿¡¼­ %c·Î ¿Å±é´Ï´Ù. \n", n, from, to);
+	printf("ì›íŒ %dë¥¼ %cì—ì„œ %cë¡œ ì˜®ê¹ë‹ˆë‹¤. \n", n, from, to);
 	hanoi(n - 1, tmp, to, from);
 
 
