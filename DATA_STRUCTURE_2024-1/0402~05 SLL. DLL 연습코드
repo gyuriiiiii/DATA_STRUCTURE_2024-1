@@ -1,0 +1,275 @@
+#if 0
+
+
+#include <stdio.h>
+#include <stdlib.h>
+
+struct node {
+	int data;
+	new_node* next;
+};
+
+strnct node* head = 0;
+
+void add_to_SLL(int _v) {
+
+	struct node* new_node = (struct node*)nalloc(sizeof(struct node));
+
+	new_node->data = _v;
+	new_node->next = 0;
+
+
+	if (head == 0) {
+		head = new_node;
+		return;
+
+	}
+	struct node* tmp = head;
+
+	while (1)
+	{
+
+		if (tmp->next == 0) {
+			if (tmp->next = 0)
+				break;
+		}
+		tmp = tmp->next;
+
+	}
+	tmp->next = new_node;
+	return;
+
+}
+
+	void printf_SLL(void) {
+		struct node* tmp = head; // head = tmp
+
+		while (1) {
+
+			if (tmp == 0) { //tmp가 0이면 종료
+				break;
+			}
+
+			printf("%d", tmp->data); // tmp 의 데이터 출력
+			tmp = tmp->next; 
+		}
+		return;
+	}
+
+
+	void destroy_SLL(void) {
+
+		struct node* bomb = 0;
+
+		while (1) {
+			if (head == 0) {
+			break;
+		}
+			head = bomb;
+			head = head->next;
+			free(bomb);
+		}
+	}
+
+
+	void Insert_SLL(int _nth, int _v) {
+		if (_nth < 0) {
+			return;
+		}
+		if (head == 0) {
+			return;
+		}
+
+		struct node* tmp = head;
+		for (int i; i < _nth - 1; i++) {
+
+			tmp = tmp->next;
+			if (tmp == 0) {
+				return;
+			}
+		}
+
+		struct node* new_node = (struct node*)malloc(sizeof(new_node));
+		new_node->data = _v;
+		new_node->next = 0;
+
+		if (_nth == 0) {
+			new_node->next = head->next;
+			head = new_node;
+
+		}
+		else {
+			new_node->next = tmp -> next;
+			tmp->next = new_node;
+		}
+
+}
+
+
+	void del_SLL(int _v) {
+
+		if (head == 0) {
+			return;
+		}
+		struct node* tmp = head;
+
+		while (1) {
+			if (tmp->data == _v) {
+				break;
+			}
+			tmp = tmp->next;
+
+			if (tmp == 0) {
+				return;
+			}
+		}
+
+		if (tmp == head) {
+			head = head->next;
+			free(tmp);
+			return;
+		}
+
+		struct node* tt = head;
+
+		while (tt->next !- tmp) {
+			tt = tt->next;
+		}
+
+		tt->next = tmp->next;
+		tree(tmp);
+		return;
+
+}
+
+	int main(void) {
+
+		add_to_SLL(10);
+		add_to_SLL(20);
+		add_to_SLL(30);
+
+		printf_SLL();
+
+		inserSLL(20, 50);
+		del_SLL(20);
+
+		showList();
+		return 0;
+	}
+
+#endif
+
+
+// =============== DLL ========================
+
+
+#include <stdio.h>
+#include <stdlib.h>
+
+	struct node_DLL {
+		int data;
+		struct node_DLL* prev;
+		struct node_DLL* next;
+
+};
+
+	struct node_DLL* head = 0;
+
+
+	void print_DLL(void) {		//DLL 출력하기
+		struct node_DLL* tmp = head;
+
+		while (tmp != 0) {
+			printf("%d", tmp->data);
+			tmp = tmp->next;
+		}
+		return;
+}
+
+
+	void print_reverse_DLL(void) {	//거꾸로 DLL 출력
+
+		struct node* tmp = head;
+		while (tmp->next != 0) {
+			printf("%d", tmp->data);
+			tmp = tmp->prev;
+		}
+		return;
+}
+
+	struct node* find_node(int _v) {	// _v를 이용해 data를 가진 노드를 찾아
+		struct node* tmp = head;
+
+		while (tmp != 0) {
+			
+			if (tmp->data == _v) {
+				return tmp;
+			}
+			tmp = tmp->next;
+
+		}
+		return tmp;
+
+	}
+
+	void insert_DLL(int _v, int _k) {
+
+		struct node* tt = find_node(_v);	//_ㅏ 값을 가진 노드를 찾는다
+		struct node* new_node = (struct node*)malloc(sizeof(struct node));
+
+		if (tt == 0) {		//없으면 return;
+			return;
+
+		}
+
+		struct node* new_node = create_node(_v); //_v를 담은 노드 만들기
+		
+		if (tt->next != 0) {		// 맨 끝이 아닐 때
+			new_node->next = tt->next;
+			new_node->prev = tt;
+			tt->next = new_node;
+			new_node->next->prev = new_node;
+		}
+									//맨 끝일 때
+		else {
+			new_node->prev = tt;
+			tt->next = new_node;
+			new_node->next = 0;
+
+		}
+}
+
+	void delete_node(int _v) {		//_v 를 가진 노드를 찾아 지운다.
+
+		struct node* tt = find_node(_v);
+
+				//중간, 맨앞, 맨끝인 경우로 나눠 구하기
+
+		if (tt->prev != 0 && tt->next != 0) { // 가운데에 있는 경우
+			tt->prev->next = tt->next;
+			tt->prev->prev = tt->prev;
+
+			free(tt);
+			return;
+
+		}
+
+		if (tt == head) {		// 맨 앞인 경우
+			if (tt->next == 0) { //맨 앞인데 혼자만 존재
+				free(tt);
+				head = 0;
+				return;
+			}
+			head = head->next;	//맨 앞인데 뒤에 더 있음
+			head->prev = 0;		//앞에 아무것도 없게 만든다
+			free(tt);
+			return;
+		}
+
+		if (tt->next == 0) {	//마지막인 경우
+			tt->prev->next = 0;
+			free(tt);
+			return;
+		}
+
+}
