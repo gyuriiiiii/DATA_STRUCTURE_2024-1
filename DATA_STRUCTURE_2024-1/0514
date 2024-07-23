@@ -1,0 +1,151 @@
+// graph.c
+
+// 무방향 가중치 없는 그래프
+
+#include <stdio.h>
+#include <stdlib.h>
+
+#define SZ 100 // 최대 정점 수는 100
+
+struct node {
+    int data;
+    struct node* next;
+};
+
+int graph[SZ][SZ]; // 그래프 초기화 (모두 0으로 초기화)
+int stack[SZ]; // 스택
+int top = -1; // 스택 top 인덱스
+int queue[SZ]; // 큐
+int front = 0, rear = 0; // 큐 front, rear 인덱스
+int vertex_info[SZ]; // 정점 방문 여부 (0: 미방문, 1: 방문)
+
+void mark_as_visited(int _v) {
+    vertex_info[_v] = 1; // 정점 _v를 방문했다고 표시
+}
+
+int visited(int _v) {
+    return vertex_info[_v]; // 정점 _v의 방문 여부 반환
+}
+
+void push(int _v) {
+    stack[++top] = _v; // 스택에 _v 추가
+}
+
+int pop(void) {
+    if (top == -1) // 스택이 비어있으면
+        return -999; // -999 반환
+    else
+        return stack[top--]; // 스택 top 요소 반환 후 top 감소
+}
+
+void enque(int _v) {
+    queue[rear++] = _v; // 큐에 _v 추가
+    rear %= SZ; // rear 인덱스 모듈로 연산
+}
+
+int deque(void) {
+    if (front == rear) // 큐가 비어있으면
+        return -999; // -999 반환
+    else {
+        int val = queue[front++]; // 큐 front 요소 반환
+        front %= SZ; // front 인덱스 모듈로 연산
+        return val;
+    }
+}
+
+// 정점 v1-v2 간 간선 추가
+void add_to_graph(int v1, int v2) {
+    graph[v1][v2] = graph[v2][v1] = 1; // 무방향 그래프이므로 양쪽 간선 추가
+}
+
+// 스택에 _v가 있는지 확인
+int stacked(int _v) {
+    for (int i = 0; i <= top; i++) {
+        if (stack[i] == _v)
+            return 1; // 스택에 _v가 있으면 1 반환
+    }
+    return 0; // 없으면 0 반환
+}
+
+// 큐에 _v가 있는지 확인
+int inQueue(int _v) {
+    int i = front;
+    while (i != rear) { // front부터 rear 전까지 순회
+        if (queue[i] == _v)
+            return 1; // 큐에 _v가 있으면 1 반환
+        i = (i + 1) % SZ; // i를 다음 인덱스로 이동 (모듈로 연산)
+    }
+    return 0; // 없으면 0 반환
+}
+
+// 정점 _v의 인접 정점 리스트 반환
+struct node* get_list_of_adjacent_vertices(int _v) {
+    struct node* head = NULL;
+    for (int i = 0; i < SZ; i++) {
+        if (graph[_v][i] == 1) { // 정점 _v와 i가 인접하면
+            struct node* new_node = (struct node*)malloc(sizeof(struct node));
+            new_node->data = i;
+            new_node->next = NULL;
+            if (head == NULL) // 첫 노드이면
+                head = new_node; // head 포인터 업데이트
+            else {
+                struct node* tmp = head;
+                while (tmp->next != NULL) // 마지막 노드 찾기
+                    tmp = tmp->next;
+                tmp->next = new_node; // 마지막 노드 다음에 새 노드 추가
+            }
+        }
+    }
+    return head;
+}
+
+// 깊이 우선 탐색 (DFS)
+void depth_first_search(int _v) {
+    push(_v); // 시작 정점 스택에 추가
+    while (1) {
+        int k = pop(); // 스택에서 정점 꺼내기
+        if (k == -999) // 스택이 비었으면 종료
+            return;
+        printf("%d ", k); // 방문한 정점 출력
+        mark_as_visited(k); // 정점 k를 방문했다고 표시
+        struct node* neighbors = get_list_of_adjacent_vertices(k); // 인접 정점 리스트 구하기
+        struct node* tmp = neighbors;
+        while (tmp != NULL) { // 인접 정점 리스트 순회
+            if (visited(tmp->data) == 0 && stacked(tmp->data) == 0) // 미방문이고 스택에 없는 정점이면
+                push(tmp->data); // 스택에 추가
+            tmp = tmp->next;
+        }
+    }
+}
+
+// 너비 우선 탐색 (BFS)
+void breadth_first_search(int _v) {
+    enque(_v); // 시작 정점 큐에 추가
+    while (1) {
+        int k = deque(); // 큐에서 정점 꺼내기
+        if (k == -999) // 큐가 비었으면 종료
+            return;
+        printf("%d ", k); // 방문한 정점 출력
+        mark_as_visited(k); // 정점 k를 방문했다고 표시
+        for (int i = 0; i < SZ; i++) {
+            if (graph[k][i] == 1 && visited(i) == 0 && inQueue(i) == 0) // 인접하고 미방문이고 큐에 없는 정점이면
+                enque(i); // 큐에 추가
+        }
+    }
+}
+
+int main(void) {
+    add_to_graph(1, 4); // 정점 1과 4 연결
+    add_to_graph(5, 9); // 정점 5와 9 연결
+    add_to_graph(2, 1); // 정점 2와 1 연결
+    add_to_graph(5, 6); // 정점 5와 6 연결
+    add_to_graph(5, 14); // 정점 5와 14 연결
+    add_to_graph(1, 5); // 정점 1과 5 연결
+    add_to_graph(5, 4); // 정점 5와 4 연결
+
+    depth_first_search(1); // DFS 시작 정점: 1
+    printf("\n");
+    breadth_first_search(1); // BFS 시작 정점: 1
+
+    return 0;
+}
