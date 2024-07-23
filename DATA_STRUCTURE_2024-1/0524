@@ -1,0 +1,219 @@
+#include <stdio.h>
+
+// 1. start vertax를 visited vertex에 추가한다.
+// 2. visited vertex 에서 non visited 중 짧은 것 추가
+// 3.  v edge 추가
+// 4. visited group 갱신 : add v
+// 5. vertex -1 찾을 때까지 반복한다.
+
+#define NV 5
+
+#if 0
+
+void perform_MST(int graph[][NV], int sVertex) {
+	int visited[NV] = { 0 };
+	visited[sVertex] = 1;
+
+	for (int i = 0; i < NV - 1; i++) {
+		int minDist = 9999;
+		int visited_vertex = -1;
+		int nonvisited_vertex = -1;
+
+		for (int j = 0; j < NV; j++) {
+			if (visited[j] = 1) {
+				for (int k = 0; k < NV; k++) {
+					if (visited[k] == 0) {
+						if( (graph[j][k] > 0)((graph[j][k]) < minDist) ){
+
+							minDist = graph[j][k];
+							visited_vertex = j;
+							nonvisited_vertex = k;
+						}
+					}
+				}
+			}
+		}
+
+		pritf("%d --- %d\n", visited_vertex, nonvisited_vertex);
+		visited[nonvisited_vertex] = 1;
+	}
+}
+
+#endif
+
+#if 0
+
+void perform_MST_Kruskal(int graph[][NV]) {
+	int family[NV] = { 0, 1, 2, 3, 4 };
+	for (int cnt = 0; cnt < NV - 1; cnt++) {
+		int v1 = -1;
+		int v2 = -1;
+		int minDist = 9999;
+
+		for (int i = 0; i < NV; i++) {
+			for (int j = i + 1; j < NV; j++) {
+				// 경로가 있고
+				// 같은 family 가 아니고
+				//알려진 ninDist 보다 짧으면 edge 추가
+				if ((graph[i][j] > 0) && (family[i] != family[j] && minDist > graph[i][j])) {
+					minDist = graph[i][j];
+					v1 = i;
+					v2 = j;
+				}
+			}
+		}
+
+		printf("%d --- %d\n" , v1 , v2);
+			int old_family = family[v2];
+			int new_family = family[v2];
+
+			for (int k = 0; k < NV; k++) {
+				if (family[k] == old_family) {
+					family[k] == new_family;
+				}
+			}
+	}
+}
+
+void addEdge(int grapf[][NV], int v1, int v2, int weight) {
+	graph[v1][v2] = graph[v2][v1] = weight;
+}
+
+#endif
+
+#define G_SZ 7
+
+typedef struct {
+	int prev;
+	int dist;
+	int done;
+}DijkstraElement;
+
+void initDTable(DijkstraElement dtable[] , int start_vertex) {
+	for (int i = 0; i < G_SZ; i++) {
+		dtable[i].prev = -1;
+		dtable[i].dist = 9999;
+		dtable[i].done = 0;
+	}
+	dtable[start_vertex].done = 1;
+}
+
+// dtable에서 dist가 가장 짧고, done = 0인 vertex를 찾아서, 
+// 그 번호를 반환한다.
+// 만약, 모든 vertex들의 done = 1이면, -1을 반환 ---> Dijkstra 알고리즘 종료를 의미
+int find_shortest_path_vertex(DijkstraElement dtable[]) {
+
+	int vertex_idx = -1; // 최단거리가 결정되는 vertex 번호
+	int vertex_dist = 9999; // 그 vertex의 최단거리
+
+	for (int i = 0; i < G_SZ; i++) {
+
+		if (dtable[i].done == 0 && dtable[i].dist < vertex_dist) {
+			vertex_idx = i;
+			vertex_dist = dtable[i].dist;
+		}
+	}
+	return vertex_idx;
+}
+
+void showDTable(DijkstraElement dtable[]) {
+
+	// vertex 번호 출력
+	for (int i = 1; i < G_SZ; i++) {
+		printf("%5d ", i);
+	}
+	printf("\n");
+
+	// prev
+	for (int i = 1; i < G_SZ; i++) {
+		printf("%5d ", dtable[i].prev);
+	}
+	printf(" --- prev \n");
+
+	// dist
+	for (int i = 1; i < G_SZ; i++) {
+		printf("%5d ", dtable[i].dist);
+	}
+	printf(" --- dist \n");
+
+	// done
+	for (int i = 1; i < G_SZ; i++) {
+		printf("%5d ", dtable[i].done);
+	}
+	printf(" --- done \n");
+}
+
+// s : start vertex 번호
+// e : end vertex 번호
+// s --> e까지 가는 경로를 (중간 vertex 포함해서) 보여준다.
+void showPath(int s, int e, DijkstraElement dtable[]) {
+
+	int current = e;
+	while (current != s) {
+		printf("%d ", current);
+		current = dtable[current].prev;
+	}
+	printf("%d ", s);
+}
+
+
+int main() {
+	DijkstraElement dtable[G_SZ];
+
+	int graph[G_SZ][G_SZ] = {
+		{-1,-1,-1,-1,-1,-1,},
+		{-1,-1,-1,-1,-1,-1,},
+		{-1,-1,-1,-1,-1,-1,},
+		{-1,-1,-1,-1,-1,-1,},
+		{-1,-1,-1,-1,-1,-1,},
+		{-1,-1,-1,-1,-1,-1,},
+	
+	};
+	// start vertex에서 직접 도달할 수 있는 vertex들에 대해서
+// dtable을 갱신한다.
+	int start_vertex = 1;
+
+	// dtable 초기화
+	initDTable(dtable, start_vertex);
+
+	dtable[start_vertex].done = 1; // <---- 경로를 다 찾았다고 표시
+
+	for (int i = 0; i < G_SZ; i++) {
+		if (graph[start_vertex][i] != -1) { // start_vertex --> i까지 직접 가는 길이 있으면,
+			dtable[i].dist = graph[start_vertex][i];
+			dtable[i].prev = start_vertex;
+		}
+	}
+
+	// dtable에서 가장 짧은 거리를 가진 vertex이면서, done = 0인 vertex를 찾는다.
+	while (1) {
+		int v = find_shortest_path_vertex(dtable);
+		if (v == -1) { // Dijkstra 알고리즘 완료
+			break;
+		}
+
+		dtable[v].done = 1; // v까지는 최단 경로가 결정되었다.
+
+		// v를 통해서 갱신되는 경로가 더 짧은 vertex들을 찾아서,
+		// 해당 dtable을 갱신
+		for (int i = 0; i < G_SZ; i++) {
+
+			if (graph[v][i] > -1 && dtable[i].done == 0) {
+
+				// i까지 최단경로가 결정되지 않은 것들 중에서.
+				// v를 통해서 i까지 가는 길이 기존 알려진 것보다 더 짧으면
+
+				// 이미 알려진 거리 > v를 통해서 가는 길
+				if (dtable[i].dist > dtable[v].dist + graph[v][i]) {
+					dtable[i].dist = dtable[v].dist + graph[v][i];
+					dtable[i].prev = v; // <---- 주의
+				}
+			}
+		}
+	}
+
+	showDTable(dtable);
+	printf("===================================================\n");
+	showPath(1, 6, dtable);
+	return 0;
+}
