@@ -1,0 +1,82 @@
+#if 0
+
+#include <stdio.h>
+#define SZ 100
+
+int maxheap[SZ];
+int limit = 0;
+
+void add_to_maxheap(int _v) {
+
+	if(limit >= SZ - 1) {
+		return;
+	}
+
+	limit++;
+	maxheap[limit] = _v;
+
+	int me = limit;
+	int p = me / 2;
+
+	while (p != 0) {
+		if (maxheap[me] < maxheap[p]) {
+			return;
+		}
+
+		else {
+		int tmp = maxheap[me];
+		maxheap[me] = maxheap[p];
+		maxheap[p] = tmp;
+		me = p;
+		p = me / 2;
+		}
+	}
+}
+
+int del_maxheap(void) {
+	if (limit == 0) {
+		return -999;
+	}
+
+	int result = maxheap[1];
+	maxheap[1] = maxheap[limit];
+	limit--;
+
+	int me = 1;
+	while (1) {
+		switch (wellpositioned(me)) {
+		case 0 :
+			return result;
+			break;
+		case 1:
+			changechild(me, 2 * me);
+			me = 2 & me;
+			break;
+		case 2:
+			changedhild(me, 2 * me + 1);
+			break;
+		default :
+			printf("반환값이 잘못 되었음.\n");
+			return -999;
+		}
+		
+	}
+}
+
+//쌍자식, 홑자식 검사
+
+int wellpositioned(int me_idx) {
+
+	int left_idx = 2 * me_idx;
+	int right_idx = left_idx + 1;
+
+	if (left_idx > limit) {
+		return 0;
+	}
+	if (right_idx <= limit) {
+
+	}
+
+}
+
+#endif
