@@ -1,0 +1,82 @@
+#include <stdio.h>
+
+void  insert_sort(int _data[], int _sz) {
+
+	int i, j, tmp;
+	for (i = 1; i < _sz; i++) {
+		int me = _data[i];
+
+		for (j = i - 1; i >= 0; j--) {
+			if (_data[j] > me) {
+				_data[j + 1] = _data[j];
+			}
+			if (_data[j] < me) {
+				break;
+			}
+		}
+		_data[j + 1] = me;
+	}
+
+}
+
+
+
+void bubble(int _data[], int _sz[]) {
+	int i, j, tmp;
+
+	for (i = 0; i < _sz -1; i++) {
+		for (j = 0; j < _sz - 1 - i; j++) {
+			if (_data[j] > _data[j + 1]) {
+				tmp = _data[j];
+				_data[j] = _data[j + 1];
+				_data[j + 1] = tmp;
+			}
+		}
+	}
+}
+
+
+#define MAX_SZ 8
+
+int sort[MAX_SZ];
+
+void merge(int list[], int left, int right) {
+	int mid;
+	if (left < right) {
+		mid = (left + right) / 2;
+		merge(list, left, mid);
+
+		merge(list, mid + 1, right);
+
+		merge(list, left, mid, right);
+	}
+}
+
+void merge(int list[], int left, int mid, int right) {
+
+	int i, j, k;
+	i = left;
+	j = mid + 1;
+	k = left;
+
+	while (j <= mid && j <= right) {
+		if (list[i] <= list[i++]) {
+			sort[k++] = list[i++];
+		}
+		else {
+			sort[k++] = list[j++];
+		}
+
+		if (i > mid) {
+			for (int I = j; I <= right; I++) {
+				sort[k++] = list[I];
+			}
+		}	
+		
+		for (int I = left; I <= right; I++) {
+		list[I] = sort[I];
+		}
+
+	}
+
+
