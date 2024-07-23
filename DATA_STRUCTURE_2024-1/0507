@@ -1,0 +1,152 @@
+// heap 을 이용한 우선순위 queue
+//  heap = complete binary tree 완전이진트리
+// 부모노드 >= 자식노드 -> MAX 1
+// 부모노드 <= 자식노드 -> MIN 0
+// 
+// 한 번 할 때 1/2 가 된다 -> log2n 이다.
+// 
+// 0은 비워둔다. 계산이 안돼. 1/2 , x2 해도 0이자나. 계산 못 하는 숫자라서 이용 안함.
+// 
+
+
+#include <stdio.h>
+#define _CRT_SECIRE_WARNINGS
+#define SZ 100
+//enqueue : 3 1 2 9 7 5 
+// dequeue : 9 7 5 3 2 1 
+
+int maxheap[SZ];
+int limit = 0; // maxheap 을 구현하는 1차원 배열이 어디까지 차있는지 표시함.
+
+void add_maxheap(int _v) {
+
+	if (limit > SZ - 1) {
+		return;
+	}
+	limit++;
+	maxheap[limit] = _v;
+	
+	int me = limit;
+	int p = me / 2;
+
+	while (p != 0) {
+		if (maxheap[me] < maxheap[p]) {
+			return; //me <p 인 경우
+		}
+		else {
+			int tmp = maxheap[me];
+			maxheap[me] = maxheap[p];
+			maxheap[p] = tmp;
+			me = p;
+			p = me / 2;
+
+		} // me > p
+	}
+}
+
+void changemewithchild(int me_idx, int child_idx) {
+	int tmp = maxheap[me_idx];
+	maxheap[me_idx] = maxheap[child_idx];
+	maxheap[child_idx] = tmp;
+	return;
+
+}
+
+
+void changemewithleft(int me_idx) {
+	int tmp = maxheap[me_idx];
+	maxheap[me_idx] = maxheap[2 * me_idx];
+	maxheap[2 * me_idx] = tmp;
+	return;
+
+}
+
+
+// 정확한 자리에 있음
+// 0 : 잘 자리잡음
+// 1:왼쪽과 교체 필요
+// 2: 오른쪽과 교체 필요
+
+
+int wellpositioned(int me_idx) {
+	int left_idx = 2 * me_idx;
+	int right_idx = left_idx + 1;
+	
+	if (left_idx > limit) {
+		return 0;
+	}
+
+	if (right_idx <= limit && maxheap[right_idx] > maxheap[me_idx]) {
+		return 2;
+	}
+
+	if (maxheap[left_idx] > maxheap[me_idx]) {
+		return 1;
+	}
+
+	return 0;
+}
+
+
+void del_maxheap(int _v) {
+	if (limit == 0) {
+		return -999;
+	}
+
+	int result = maxheap[1];
+
+	maxheap[1] = maxheap[limit];
+	limit--;
+
+	int me = 1;
+	while (1) {
+		switch (wellpositioned(me)) { // wellpositioned = 적합한 자리에 위치해 있음 = 0 / 왼쪽이 더 큼 바꿔야 함 = 1 / 오른쪽이 큼 = 2
+
+		case 0:
+			return 0; //더 이상 건들 필요 x 정확한 위치에 있음.
+		case 1:
+			changemewithleft(me);
+			me = 2 * me;
+			break; // 완쪽과 교체 -> 한 단게 내려옴.
+
+		case 2:
+			changemewithright(me);
+			me = me * 2 + 1;
+			break; // 오른쪽과 교체 -> 한 단계 내려옴.
+		default:
+			printf("반환값이 잘못 되었음\n");
+			return;
+		}
+
+	}
+	return result;
+
+}
+
+void enque(int _v) {
+	add_maxheap(_v);
+	return;
+
+}
+
+int deque(int _v) {
+	del_maxheap(_v);
+	 return;
+}
+
+
+int main() {
+
+	enqueue(3);
+	enqueue(1);
+	enqueue(2);
+	enqueue(9);
+	enqueue(7);
+	enqueue(5);
+
+	for (int i = 0; i < 6; i++) {
+		printf("%d\n", deque());
+	}
+
+	return 0;
+}
